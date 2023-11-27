@@ -1,4 +1,5 @@
 export abstract class Solution {
+  constructor(private input: string) {}
   abstract part1Solution(): any;
   abstract part2Solution(): any;
 

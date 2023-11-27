@@ -1,0 +1,47 @@
+name: "Update Advent of Code README"
+
+on:
+  workflow_dispatch: # Manually run workflow
+  schedule:
+    - cron: "0 20 * * *"
+
+env:
+  ADVENT_URL: ${{ secrets.ADVENT_URL }}
+  ADVENT_SESSION_KEY: ${{ secrets.ADVENT_SESSION_KEY }}
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          ssh-key: ${{ secrets.SSH_KEY }}
+
+      - name: Setup Git Config
+        run: |
+          git config --global user.name quellen-sol
+          git config --global user.email marquelle.nesbitt@gmail.com
+    
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+          cache-dependency-path: "./pnpm-lock.yaml"
+      
+      - name: Run README Update Script
+        run: |
+          pnpm i
+          pnpm ts-node ./scripts/update-readme.ts
+          set +e
+          pnpm prettier --write README.md
+
+      - name: Commit README Changes
+        run: |
+          git add README.md
+          git commit -m "ci: update README.md"
+          git push
