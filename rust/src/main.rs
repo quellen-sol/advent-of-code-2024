@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use defs::AdventProblemSolver;
 use solutions::day_1::Day1Solution;
 

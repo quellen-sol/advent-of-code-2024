@@ -1,14 +1,25 @@
+use std::fs;
+
 use crate::defs::AdventProblemSolver;
 
 struct ExampleSolution {
-  _input: &'static str,
+  input: String,
 }
 
-impl AdventProblemSolver<&'static str, &'static str> for ExampleSolution {
-  fn part_one_solution(&self) -> &'static str {
-    "?"
+impl ExampleSolution {
+  pub fn new(file_path: &str) -> Self {
+    let text = fs::read_to_string(file_path).expect("Could not read input file");
+    Self {
+      input: text
+    }
   }
-  fn part_two_solution(&self) -> &'static str {
-    "?"
+}
+
+impl AdventProblemSolver<u32, u32> for ExampleSolution {
+  fn part_one_solution(&self) -> u32 {
+    todo!("Part 1")
+  }
+  fn part_two_solution(&self) -> u32 {
+    todo!("Part 2")
   }
 }
