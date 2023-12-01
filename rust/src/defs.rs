@@ -1,4 +1,4 @@
-pub trait AdventProblemSolver<PartOneSolution, PartTwoSolution>  {
-  fn solve_part_one() -> PartOneSolution;
-  fn solve_part_two() -> PartTwoSolution;
+pub trait AdventProblemSolver<PartOneSolution, PartTwoSolution> {
+  fn part_one_solution(&self) -> PartOneSolution;
+  fn part_two_solution(&self) -> PartTwoSolution;
 }

@@ -1,14 +1,14 @@
 use crate::defs::AdventProblemSolver;
 
 struct ExampleSolution {
-  input: &'static str,
+  _input: &'static str,
 }
 
 impl AdventProblemSolver<&'static str, &'static str> for ExampleSolution {
-  fn solve_part_one() -> &'static str {
-    "lol"
+  fn part_one_solution(&self) -> &'static str {
+    "?"
   }
-  fn solve_part_two() -> &'static str {
-    "lol"
+  fn part_two_solution(&self) -> &'static str {
+    "?"
   }
 }
