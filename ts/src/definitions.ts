@@ -2,9 +2,11 @@ import { readFileSync } from "fs";
 
 export abstract class Solution {
   input: string;
+  lines: string[];
   constructor(inputFileName: string) {
     const input = readFileSync(inputFileName, "utf-8");
     this.input = input;
+    this.lines = input.split("\n");
   }
 
   abstract part1Solution(): any;
