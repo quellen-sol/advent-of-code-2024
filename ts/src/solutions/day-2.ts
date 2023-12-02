@@ -8,7 +8,7 @@ type ParsedGame = {
 
 type ParsedGameMap = {
   [gameNumber: string]: ParsedGame[];
-}
+};
 
 export class Day2Solution extends Solution {
   constructor() {
@@ -19,25 +19,31 @@ export class Day2Solution extends Solution {
     const maxCubeNums = {
       red: 12,
       green: 13,
-      blue: 14
+      blue: 14,
     };
     // Turn the input into a ParsedGameMap
     const gameMap = this.lines.reduce<ParsedGameMap>((acc, curr, idx, arr) => {
       const gameNumber = idx + 1;
-      const gameResults = curr.replace(/Game \d+:\s*/, "").split(";").map<ParsedGame>(g => {
-        return g.split(",").reduce<ParsedGame>((acc, curr) => {
-          const colorResult = curr.trim().split(" ") as [amount: string, color: string];
-          const amount = parseInt(colorResult[0]);
-          const color = colorResult[1] as keyof ParsedGame;
-          acc[color] = amount;
-          return acc;
-        }, {
-          red: 0,
-          green: 0,
-          blue: 0
-        })
-      });
-    
+      const gameResults = curr
+        .replace(/Game \d+:\s*/, "")
+        .split(";")
+        .map<ParsedGame>((g) => {
+          return g.split(",").reduce<ParsedGame>(
+            (acc, curr) => {
+              const colorResult = curr.trim().split(" ") as [amount: string, color: string];
+              const amount = parseInt(colorResult[0]);
+              const color = colorResult[1] as keyof ParsedGame;
+              acc[color] = amount;
+              return acc;
+            },
+            {
+              red: 0,
+              green: 0,
+              blue: 0,
+            },
+          );
+        });
+
       acc[gameNumber] = gameResults;
       return acc;
     }, {});
@@ -46,7 +52,11 @@ export class Day2Solution extends Solution {
       const [gameIdStr, gameResults] = curr;
       const gameId = parseInt(gameIdStr);
       const validGame = gameResults.every((gameResult) => {
-        return gameResult.red <= maxCubeNums.red && gameResult.green <= maxCubeNums.green && gameResult.blue <= maxCubeNums.blue;
+        return (
+          gameResult.red <= maxCubeNums.red &&
+          gameResult.green <= maxCubeNums.green &&
+          gameResult.blue <= maxCubeNums.blue
+        );
       });
       if (validGame) {
         acc += gameId;
@@ -59,19 +69,25 @@ export class Day2Solution extends Solution {
     // Turn the input into a ParsedGameMap
     const gameMap = this.lines.reduce<ParsedGameMap>((acc, curr, idx, arr) => {
       const gameNumber = idx + 1;
-      const gameResults = curr.replace(/Game \d+:\s*/, "").split(";").map<ParsedGame>(g => {
-        return g.split(",").reduce<ParsedGame>((acc, curr) => {
-          const colorResult = curr.trim().split(" ") as [amount: string, color: string];
-          const amount = parseInt(colorResult[0]);
-          const color = colorResult[1] as keyof ParsedGame;
-          acc[color] = amount;
-          return acc;
-        }, {
-          red: 0,
-          green: 0,
-          blue: 0
-        })
-      });
+      const gameResults = curr
+        .replace(/Game \d+:\s*/, "")
+        .split(";")
+        .map<ParsedGame>((g) => {
+          return g.split(",").reduce<ParsedGame>(
+            (acc, curr) => {
+              const colorResult = curr.trim().split(" ") as [amount: string, color: string];
+              const amount = parseInt(colorResult[0]);
+              const color = colorResult[1] as keyof ParsedGame;
+              acc[color] = amount;
+              return acc;
+            },
+            {
+              red: 0,
+              green: 0,
+              blue: 0,
+            },
+          );
+        });
 
       acc[gameNumber] = gameResults;
       return acc;
@@ -91,11 +107,11 @@ export class Day2Solution extends Solution {
     return {
       red: minimumRed,
       green: minimumGreen,
-      blue: minimumBlue
+      blue: minimumBlue,
     };
   }
 
   calculatePower(minimum: ParsedGame): number {
     return minimum.red * minimum.green * minimum.blue;
-  } 
+  }
 }
