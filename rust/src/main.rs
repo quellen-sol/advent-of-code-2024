@@ -1,13 +1,13 @@
-#![allow(dead_code)]
+#![allow(dead_code, unused)]
 use defs::AdventProblemSolver;
 use solutions::day_1::Day1Solution;
 
 mod defs;
 mod example_solution;
 mod solutions;
+mod utils;
 
 fn main() {
-  let day_1 = Day1Solution::new("./src/solutions/day-1-input.txt");
-  println!("Part 1 Solution: {}", day_1.part_one_solution());
-  println!("Part 2 Solution: {}", day_1.part_two_solution());
+  let solution = Day1Solution::new("./src/solutions/day-1-input.txt");
+  solution.log_both_solutions();
 }
