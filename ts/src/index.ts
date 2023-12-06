@@ -1,5 +1,5 @@
-import { Day4Solution } from "./solutions/day-4";
+import { Day5Solution } from "./solutions/day-5";
 
-const solution = new Day4Solution();
+const solution = new Day5Solution();
 
 solution.logBothSolutions();

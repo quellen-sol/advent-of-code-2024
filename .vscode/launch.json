@@ -12,7 +12,7 @@
         "<node_internals>/**"
       ],
       "cwd": "${workspaceFolder}/ts",
-      "program": "${file}",
+      "program": "dist/index.js",
       "outFiles": [
         "${workspaceFolder}/**/*.js"
       ]
