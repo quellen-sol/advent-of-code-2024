@@ -9,9 +9,7 @@ struct ExampleSolution {
 impl ExampleSolution {
   pub fn new(file_path: &str) -> Self {
     let text = fs::read_to_string(file_path).expect("Could not read input file");
-    Self {
-      input: text
-    }
+    Self { input: text }
   }
 }
 

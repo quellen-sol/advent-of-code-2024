@@ -43,29 +43,47 @@ impl Day6Solution {
 impl AdventProblemSolver<u64, u64> for Day6Solution {
   fn part_one_solution(&self) -> u64 {
     let lines: Vec<&str> = self.input.lines().collect();
-    let times: Vec<u64> = get_all_captures(r"(\d+)", lines[0]).unwrap().iter().map(|c| c.parse().unwrap()).collect();
-    let distances: Vec<u64> = get_all_captures(r"(\d+)", lines[1]).unwrap().iter().map(|c| c.parse().unwrap()).collect();
-    let races: Vec<Race> = times.iter().zip(distances.iter()).map(|(time, dist)| {
-      Race {
+    let times: Vec<u64> = get_all_captures(r"(\d+)", lines[0])
+      .unwrap()
+      .iter()
+      .map(|c| c.parse().unwrap())
+      .collect();
+    let distances: Vec<u64> = get_all_captures(r"(\d+)", lines[1])
+      .unwrap()
+      .iter()
+      .map(|c| c.parse().unwrap())
+      .collect();
+    let races: Vec<Race> = times
+      .iter()
+      .zip(distances.iter())
+      .map(|(time, dist)| Race {
         time: *time,
         distance: *dist,
-      }
-    }).collect();
+      })
+      .collect();
     println!("{:?}", races);
     let result: u64 = races.iter().fold(1, |acc, e| acc * e.find_ways_to_win());
     result
   }
 
   fn part_two_solution(&self) -> u64 {
-      let lines: Vec<&str> = self.input.lines().collect();
-      let total_time = get_all_captures(r"(\d+)", lines[0]).unwrap().join("").parse().unwrap();
-      let total_distance = get_all_captures(r"(\d+)", lines[1]).unwrap().join("").parse().unwrap();
+    let lines: Vec<&str> = self.input.lines().collect();
+    let total_time = get_all_captures(r"(\d+)", lines[0])
+      .unwrap()
+      .join("")
+      .parse()
+      .unwrap();
+    let total_distance = get_all_captures(r"(\d+)", lines[1])
+      .unwrap()
+      .join("")
+      .parse()
+      .unwrap();
 
-      let race = Race {
-        time: total_time,
-        distance: total_distance,
-      };
+    let race = Race {
+      time: total_time,
+      distance: total_distance,
+    };
 
-      race.find_ways_to_win()
+    race.find_ways_to_win()
   }
 }
