@@ -20,3 +20,30 @@ export function chunks<T>(arr: T[], chunkSize: number): T[][] {
   }
   return res;
 }
+
+export function arrayCount<T>(arr: T[], val: T): number {
+  return arr.filter(v => v === val).length;
+}
+
+// export function arrayCountByCallback<T>(arr: T[], fn: (v: T) => boolean): number
+// export function arrayCountByCallback<T>(arr: T[], fn: (v: T, idx: number) => boolean): number
+export function arrayCountByCallback<T>(arr: T[], fn: (v: T, idx: number, a: typeof arr) => boolean): number {
+  return arr.filter(fn).length;
+}
+
+export type ArrayCountsWithElements<T> = {
+  count: number,
+  elements: { value: T, idx: number }[]
+}
+
+export function arrayCountByWithElements<T>(arr: T[], fn: (v: T, idx: number, a: typeof arr) => boolean): ArrayCountsWithElements<T> {
+  const elements: { value: T, idx: number }[] = [];
+  const count = arr.filter((v, idx, a) => {
+    if (fn(v, idx, a)) {
+      elements.push({ value: v, idx });
+      return true;
+    }
+    return false;
+  }).length;
+  return { count, elements };
+}
