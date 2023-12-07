@@ -22,7 +22,7 @@ export function chunks<T>(arr: T[], chunkSize: number): T[][] {
 }
 
 export function arrayCount<T>(arr: T[], val: T): number {
-  return arr.filter(v => v === val).length;
+  return arr.filter((v) => v === val).length;
 }
 
 // export function arrayCountByCallback<T>(arr: T[], fn: (v: T) => boolean): number
@@ -32,12 +32,15 @@ export function arrayCountByCallback<T>(arr: T[], fn: (v: T, idx: number, a: typ
 }
 
 export type ArrayCountsWithElements<T> = {
-  count: number,
-  elements: { value: T, idx: number }[]
-}
+  count: number;
+  elements: { value: T; idx: number }[];
+};
 
-export function arrayCountByWithElements<T>(arr: T[], fn: (v: T, idx: number, a: typeof arr) => boolean): ArrayCountsWithElements<T> {
-  const elements: { value: T, idx: number }[] = [];
+export function arrayCountByWithElements<T>(
+  arr: T[],
+  fn: (v: T, idx: number, a: typeof arr) => boolean,
+): ArrayCountsWithElements<T> {
+  const elements: { value: T; idx: number }[] = [];
   const count = arr.filter((v, idx, a) => {
     if (fn(v, idx, a)) {
       elements.push({ value: v, idx });

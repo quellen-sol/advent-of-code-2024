@@ -11,7 +11,7 @@ type ParsedHand = {
   handType: HandType;
   hand: Hand;
   values: string[];
-}
+};
 
 enum HandType {
   FiveOfKind = 6,
@@ -20,7 +20,7 @@ enum HandType {
   ThreeOfKind = 3,
   TwoPair = 2,
   OnePair = 1,
-  HighCard = 0
+  HighCard = 0,
 }
 
 const cardValsP1 = {
@@ -32,15 +32,15 @@ const cardValsP1 = {
   "7": 5,
   "8": 6,
   "9": 7,
-  "T": 8,
-  "J": 9,
-  "Q": 10,
-  "K": 11,
-  "A": 12
+  T: 8,
+  J: 9,
+  Q: 10,
+  K: 11,
+  A: 12,
 };
 
 const cardValsP2 = {
-  "J": 0,
+  J: 0,
   "2": 1,
   "3": 2,
   "4": 3,
@@ -49,10 +49,10 @@ const cardValsP2 = {
   "7": 6,
   "8": 7,
   "9": 8,
-  "T": 9,
-  "Q": 10,
-  "K": 11,
-  "A": 12
+  T: 9,
+  Q: 10,
+  K: 11,
+  A: 12,
 };
 
 export class Day7Solution extends Solution {
@@ -60,7 +60,7 @@ export class Day7Solution extends Solution {
     super("./src/solutions/day-7-input.txt");
   }
   part1Solution() {
-    const hands: ParsedHand[] = this.lines.map(line => {
+    const hands: ParsedHand[] = this.lines.map((line) => {
       const hand = this.parseLineToHand(line);
       const { handType, values } = this.getHandTypePart1(hand);
       return {
@@ -73,12 +73,14 @@ export class Day7Solution extends Solution {
     const sortedHands = hands.sort((a, b) => this.compareHandsForSort(a, b));
     const totalWinnings = sortedHands.reduce((acc, curr, idx) => {
       const factor = idx + 1;
-      return acc + (curr.hand.bid * factor);
+      return acc + curr.hand.bid * factor;
     }, 0);
     return totalWinnings;
   }
   part2Solution() {
-    const hands: ParsedHand[] = this.lines.map(line => {
+    // const input = ["JAA22 2"];
+    const input = this.lines;
+    const hands: ParsedHand[] = input.map((line) => {
       const hand = this.parseLineToHand(line);
       const { handType, values } = this.getHandTypePart2(hand);
       return {
@@ -91,7 +93,7 @@ export class Day7Solution extends Solution {
     const sortedHands = hands.sort((a, b) => this.compareHandsForSort(a, b, cardValsP2));
     const totalWinnings = sortedHands.reduce((acc, curr, idx) => {
       const factor = idx + 1;
-      return acc + (curr.hand.bid * factor);
+      return acc + curr.hand.bid * factor;
     }, 0);
     return totalWinnings;
   }
@@ -100,8 +102,8 @@ export class Day7Solution extends Solution {
     const [cards, bid] = line.trim().split(" ");
     return {
       cards: cards.split(""),
-      bid: parseInt(bid)
-    }
+      bid: parseInt(bid),
+    };
   }
 
   compareHandsForSort(handA: ParsedHand, handB: ParsedHand, map = cardValsP1): -1 | 0 | 1 {
@@ -112,8 +114,8 @@ export class Day7Solution extends Solution {
     } else {
       // Start comparing by hand values
       for (let i = 0; i < 5; i++) {
-        const handCharA = cardValsP1![handA.hand.cards[i] as keyof typeof cardValsP1];
-        const handCharB = cardValsP1![handB.hand.cards[i] as keyof typeof cardValsP1];
+        const handCharA = map![handA.hand.cards[i] as keyof typeof map];
+        const handCharB = map![handB.hand.cards[i] as keyof typeof map];
         if (handCharA > handCharB) {
           return 1;
         } else if (handCharA < handCharB) {
@@ -125,29 +127,43 @@ export class Day7Solution extends Solution {
   }
 
   getHandTypePart2(hand: Hand): {
-    handType: HandType,
-    values: string[],
+    handType: HandType;
+    values: string[];
   } {
-    if (hand.cards.every((c, _, a) => c === a[0] || c === "J")) {
+    if (hand.cards.every((c, _, a) => {
+      const oneThatIsntJ = a.find(v => v !== "J");
+      if (!oneThatIsntJ) {
+        // All are J, true
+        return true;
+      }
+      return c === oneThatIsntJ || c === "J";
+    })) {
       return {
         handType: HandType.FiveOfKind,
         values: [hand.cards[0]],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCountByCallback(a, (item) => item === c || item === "J"
-      ) === 4;
-    })) {
-      const fourOfKind = hand.cards.find((c, _, a) => arrayCountByCallback(a, (item) => item === c || item === "J") === 4);
+    } else if (
+      hand.cards.some((c, _, a) => {
+        return arrayCountByCallback(a, (item) => item === c || item === "J") === 4;
+      })
+    ) {
+      const fourOfKind = hand.cards.find(
+        (c, _, a) => arrayCountByCallback(a, (item) => item === c || item === "J") === 4,
+      );
       return {
         handType: HandType.FourOfKind,
         values: [fourOfKind!],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCountByCallback(a, (item) => item === c || item === "J") >= 2;
-    })) {
+    } else if (
+      hand.cards.some((c, _, a) => {
+        return arrayCountByCallback(a, (item) => item === c || item === "J") >= 2;
+      })
+    ) {
       // Try to find a Full House first
       // Look for 3, will be a three of kind too if the full house isn't found
-      const threeExists = hand.cards.some((c, _, a) => arrayCountByCallback(a, (item) => item === c || item === "J") === 3);
+      const threeExists = hand.cards.some(
+        (c, _, a) => arrayCountByCallback(a, (item) => item === c || item === "J") === 3,
+      );
       if (threeExists) {
         let counts: ArrayCountsWithElements<string>;
         for (const e of hand.cards) {
@@ -164,18 +180,18 @@ export class Day7Solution extends Solution {
           return {
             handType: HandType.FullHouse,
             values: [],
-          }
+          };
         } else {
           return {
             handType: HandType.ThreeOfKind,
             values: [],
-          }
+          };
         }
       }
       // Then try to find a Two Pair
       let counts: ArrayCountsWithElements<string>;
       for (const c of hand.cards) {
-        const result = arrayCountByWithElements(hand.cards, (item) => item === c || item === "J")
+        const result = arrayCountByWithElements(hand.cards, (item) => item === c || item === "J");
         if (result.count === 2) {
           counts = result;
           break;
@@ -191,13 +207,13 @@ export class Day7Solution extends Solution {
         return {
           handType: HandType.TwoPair,
           values: [],
-        }
+        };
       }
       // Return One Pair if neither of those are found
       return {
         handType: HandType.OnePair,
         values: [],
-      }
+      };
     } else {
       return {
         handType: HandType.HighCard,
@@ -207,49 +223,60 @@ export class Day7Solution extends Solution {
   }
 
   getHandTypePart1(hand: Hand): {
-    handType: HandType,
-    values: string[],
+    handType: HandType;
+    values: string[];
   } {
     if (hand.cards.every((c, _, a) => c === a[0])) {
       return {
         handType: HandType.FiveOfKind,
         values: [hand.cards[0]],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCount(a, c) === 4;
-    })) {
+    } else if (
+      hand.cards.some((c, _, a) => {
+        return arrayCount(a, c) === 4;
+      })
+    ) {
       const fourOfKind = hand.cards.find((c, _, a) => arrayCount(a, c) === 4);
       return {
         handType: HandType.FourOfKind,
         values: [fourOfKind!],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCount(a, c) === 3;
-    }) && hand.cards.some((c, _, a) => {
-      return arrayCount(a, c) === 2;
-    })) {
+    } else if (
+      hand.cards.some((c, _, a) => {
+        return arrayCount(a, c) === 3;
+      }) &&
+      hand.cards.some((c, _, a) => {
+        return arrayCount(a, c) === 2;
+      })
+    ) {
       const threeOfKind = hand.cards.find((c, _, a) => arrayCount(a, c) === 3);
       const pair = hand.cards.find((c, _, a) => arrayCount(a, c) === 2);
       return {
         handType: HandType.FullHouse,
         values: [threeOfKind!, pair!],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCount(a, c) === 3;
-    })) {
+    } else if (
+      hand.cards.some((c, _, a) => {
+        return arrayCount(a, c) === 3;
+      })
+    ) {
       const threeOfKind = hand.cards.find((c, _, a) => arrayCount(a, c) === 3);
       return {
         handType: HandType.ThreeOfKind,
         values: [threeOfKind!],
       };
-    } else if (hand.cards.some((c, _, a) => {
-      return arrayCount(a, c) === 2;
-    })) {
-      const pair = hand.cards.find((c, _, a) => arrayCount(a, c) === 2)!;
-      const remainingCards = hand.cards.filter(c => c !== pair);
-      if (remainingCards.some((c, _, a) => {
+    } else if (
+      hand.cards.some((c, _, a) => {
         return arrayCount(a, c) === 2;
-      })) {
+      })
+    ) {
+      const pair = hand.cards.find((c, _, a) => arrayCount(a, c) === 2)!;
+      const remainingCards = hand.cards.filter((c) => c !== pair);
+      if (
+        remainingCards.some((c, _, a) => {
+          return arrayCount(a, c) === 2;
+        })
+      ) {
         const otherPair = remainingCards.find((c, _, a) => arrayCount(a, c) === 2)!;
         return {
           handType: HandType.TwoPair,

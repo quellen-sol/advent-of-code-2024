@@ -59,8 +59,11 @@ humidity-to-location map:
 60 56 37
 56 93 4`.split("\n\n");
     const [seedList, ...rest] = splitAll;
-    const seeds = chunks([...seedList.match(/\d+/g)!].map((v) => parseInt(v)), 2); 
-    const mapsList = rest.map(v => this.parseMapList(v));
+    const seeds = chunks(
+      [...seedList.match(/\d+/g)!].map((v) => parseInt(v)),
+      2,
+    );
+    const mapsList = rest.map((v) => this.parseMapList(v));
     let res: ItemMap[] | undefined;
     for (let i = mapsList.length - 1; i >= 0; i--) {
       const curr = mapsList[i];
@@ -105,7 +108,6 @@ humidity-to-location map:
     const res: ItemMap[] = [];
     for (const map of maps) {
       let [this_dst, this_src, this_len] = map;
-      const 
       for (const other of others) {
         const [o_dst, o_src, o_len] = other;
         const backMinCovered = o_dst;
@@ -117,7 +119,6 @@ humidity-to-location map:
         }
         // ItemMap { dst: , src: , len: }?
         if (backMaxCovered > thisMinCovered) {
-
         }
       }
     }
