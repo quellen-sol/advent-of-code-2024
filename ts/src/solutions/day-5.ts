@@ -1,7 +1,7 @@
 import { Solution } from "../definitions";
 import { chunks, minBy } from "../utils/utils";
 
-type ItemMap = [dest: number, start: number, len: number];
+type ItemMap = [dest: number, src: number, len: number];
 
 export class Day5Solution extends Solution {
   constructor() {
@@ -64,6 +64,9 @@ humidity-to-location map:
       2,
     );
     const mapsList = rest.map((v) => this.parseMapList(v));
+    // Create a bs range for seeds:
+    const bsSeedMap = seeds.map<ItemMap>((s) => [s[0], 0, s[1]]);
+    mapsList.unshift(bsSeedMap);
     let res: ItemMap[] | undefined;
     for (let i = mapsList.length - 1; i >= 0; i--) {
       const curr = mapsList[i];
@@ -109,17 +112,21 @@ humidity-to-location map:
     for (const map of maps) {
       let [this_dst, this_src, this_len] = map;
       for (const other of others) {
-        const [o_dst, o_src, o_len] = other;
-        const backMinCovered = o_dst;
-        const backMaxCovered = o_dst + o_len;
-        const thisMinCovered = this_src;
-        const thisMaxCovered = this_src + this_len;
-        if (backMaxCovered < thisMinCovered || backMinCovered > thisMaxCovered) {
+        const [other_dst, other_src, other_len] = other;
+        const otherMin = other_dst;
+        const otherMax = other_dst + other_len;
+        const thisMin = this_src;
+        const thisMax = this_src + this_len;
+        if (otherMax < thisMin || otherMin > thisMax) {
           continue;
         }
-        // ItemMap { dst: , src: , len: }?
-        if (backMaxCovered > thisMinCovered) {
-        }
+
+        const coveredStart = Math.max(thisMin, otherMin);// Conf
+        const coveredEnd = Math.min(thisMax, otherMax); // Conf
+        const resultLength = coveredEnd - coveredStart; // Confirmed
+        const resultSrc = other_src + (coveredStart - otherMin); // ???
+        const resultDest = this.getOutputForItemMaps(coveredStart, [map]); // Confirmed
+        res.push([resultDest, resultSrc, resultLength]);
       }
     }
 
