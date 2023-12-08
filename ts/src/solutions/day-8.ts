@@ -1,4 +1,5 @@
 import { Solution } from "../definitions";
+import { leastCommonMultiple } from "../utils/utils";
 
 type PointMap = {
   [addr: string]: {
@@ -25,20 +26,20 @@ export class Day8Solution extends Solution {
 
   walkThroughMultiStartingPoints(instructions: string, pointMap: PointMap, startingPoints: string[]): number {
     const ixs = instructions.split("");
-    let steps = 0;
-    let currentPoints = startingPoints;
-    let index = -1;
-    while (!currentPoints.every((p) => p[p.length - 1] === "Z")) {
-      index = (index + 1) % ixs.length;
-      currentPoints = currentPoints.map((curr) => {
-        const point = pointMap[curr];
-        const ix = ixs[index];
-        return point[ix as keyof PointMap[string]];
-      });
-      steps++;
+    const eachSteps = [];
+    for (const startPoint of startingPoints) {
+      let current = startPoint;
+      let steps = 0;
+      while (current[current.length - 1] !== "Z") {
+        const point = pointMap[current];
+        const ix = ixs[steps % ixs.length];
+        current = point[ix as keyof PointMap[string]];
+        steps++;
+      }
+      eachSteps.push(steps);
     }
 
-    return steps;
+    return leastCommonMultiple(...eachSteps);
   }
 
   walkThroughInstructions(instructions: string, pointMap: PointMap): number {

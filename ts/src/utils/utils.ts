@@ -25,8 +25,6 @@ export function arrayCount<T>(arr: T[], val: T): number {
   return arr.filter((v) => v === val).length;
 }
 
-// export function arrayCountByCallback<T>(arr: T[], fn: (v: T) => boolean): number
-// export function arrayCountByCallback<T>(arr: T[], fn: (v: T, idx: number) => boolean): number
 export function arrayCountByCallback<T>(arr: T[], fn: (v: T, idx: number, a: typeof arr) => boolean): number {
   return arr.filter(fn).length;
 }
@@ -49,4 +47,15 @@ export function arrayCountByWithElements<T>(
     return false;
   }).length;
   return { count, elements };
+}
+
+export function leastCommonMultiple(...nums: number[]): number {
+  const max = Math.max(...nums);
+  let curr = max;
+  while (true) {
+    if (nums.every((n) => curr % n === 0)) {
+      return curr;
+    }
+    curr += max;
+  }
 }
