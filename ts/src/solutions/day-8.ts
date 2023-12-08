@@ -20,7 +20,7 @@ export class Day8Solution extends Solution {
   part2Solution() {
     const [instructions, _, ...points] = this.lines;
     const pointMap = this.makePointMap(points);
-    const startingPoints = Object.keys(pointMap).filter(p => p[p.length - 1] === "A");
+    const startingPoints = Object.keys(pointMap).filter((p) => p[p.length - 1] === "A");
     return this.walkThroughMultiStartingPoints(instructions, pointMap, startingPoints);
   }
 
@@ -66,6 +66,6 @@ export class Day8Solution extends Solution {
         R: right,
       };
       return acc;
-    }, {})
+    }, {});
   }
 }
