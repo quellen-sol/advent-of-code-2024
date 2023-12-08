@@ -1,5 +1,5 @@
 import { Solution } from "../definitions";
-import { leastCommonMultiple } from "../utils/utils";
+import { LCM } from "../utils/utils";
 
 type PointMap = {
   [addr: string]: {
@@ -20,7 +20,7 @@ export class Day8Solution extends Solution {
   part2Solution() {
     const [instructions, _, ...points] = this.lines;
     const pointMap = this.makePointMap(points);
-    const startingPoints = Object.keys(pointMap).filter((p) => p[p.length - 1] === "A");
+    const startingPoints = Object.keys(pointMap).filter((p) => p.endsWith("A"));
     return this.walkThroughMultiStartingPoints(instructions, pointMap, startingPoints);
   }
 
@@ -30,7 +30,7 @@ export class Day8Solution extends Solution {
     for (const startPoint of startingPoints) {
       let current = startPoint;
       let steps = 0;
-      while (current[current.length - 1] !== "Z") {
+      while (!current.endsWith("Z")) {
         const point = pointMap[current];
         const ix = ixs[steps % ixs.length];
         current = point[ix as keyof PointMap[string]];
@@ -39,18 +39,16 @@ export class Day8Solution extends Solution {
       eachSteps.push(steps);
     }
 
-    return leastCommonMultiple(...eachSteps);
+    return LCM(...eachSteps);
   }
 
   walkThroughInstructions(instructions: string, pointMap: PointMap): number {
     const ixs = instructions.split("");
     let currentPoint = "AAA";
     let steps = 0;
-    let index = -1;
     while (currentPoint !== "ZZZ") {
       const point = pointMap[currentPoint];
-      index = (index + 1) % ixs.length;
-      const ix = ixs[index];
+      const ix = ixs[steps % ixs.length];
       currentPoint = point[ix as keyof PointMap[string]];
       steps++;
     }

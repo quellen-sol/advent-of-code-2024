@@ -49,7 +49,7 @@ export function arrayCountByWithElements<T>(
   return { count, elements };
 }
 
-export function leastCommonMultiple(...nums: number[]): number {
+export function LCM(...nums: number[]): number {
   const max = Math.max(...nums);
   let curr = max;
   while (true) {
