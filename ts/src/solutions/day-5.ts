@@ -6,7 +6,7 @@ type MapRange = [dest: number, src: number, len: number];
 type CoveredAndUncoveredRanges = {
   covered: MapRange[];
   uncovered: MapRange[];
-}
+};
 
 export class Day5Solution extends Solution {
   constructor() {

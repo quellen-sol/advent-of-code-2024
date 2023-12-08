@@ -130,14 +130,16 @@ export class Day7Solution extends Solution {
     handType: HandType;
     values: string[];
   } {
-    if (hand.cards.every((c, _, a) => {
-      const oneThatIsntJ = a.find(v => v !== "J");
-      if (!oneThatIsntJ) {
-        // All are J, true
-        return true;
-      }
-      return c === oneThatIsntJ || c === "J";
-    })) {
+    if (
+      hand.cards.every((c, _, a) => {
+        const oneThatIsntJ = a.find((v) => v !== "J");
+        if (!oneThatIsntJ) {
+          // All are J, true
+          return true;
+        }
+        return c === oneThatIsntJ || c === "J";
+      })
+    ) {
       return {
         handType: HandType.FiveOfKind,
         values: [hand.cards[0]],
