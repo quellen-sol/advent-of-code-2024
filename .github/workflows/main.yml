@@ -2,8 +2,6 @@ name: "Update Advent of Code README"
 
 on:
   workflow_dispatch: # Manually run workflow
-  schedule:
-    - cron: "0 20 * * *"
 
 env:
   ADVENT_URL: ${{ secrets.ADVENT_URL }}
