@@ -1,4 +1,4 @@
-# ❄️ Advent of Code 2023 Completion ❄️
+# ❄️ Advent of Code 2024 Completion ❄️
 
 |  Day  | Part One | Part Two |
 | :---: | :------: | :------: |

@@ -19,11 +19,11 @@ jobs:
       - name: Setup Git Config
         run: |
           git config --global user.name quellen-sol
-          git config --global user.email marquelle.nesbitt@gmail.com
+          git config --global user.email quellen@step.finance
     
       - uses: pnpm/action-setup@v2
         with:
-          version: 8
+          version: 9
 
       - uses: actions/setup-node@v4
         with:

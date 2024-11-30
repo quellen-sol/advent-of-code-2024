@@ -2,3 +2,4 @@ node_modules
 target
 **/*-input.txt
 dist
+.env
