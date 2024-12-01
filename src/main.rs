@@ -7,7 +7,7 @@ use solutions::day_1::Day1Solution;
 mod defs;
 mod solutions;
 
-pub const YEAR: &'static str = "2023";
+pub const YEAR: &'static str = "2024";
 
 #[derive(Parser)]
 struct Args {
