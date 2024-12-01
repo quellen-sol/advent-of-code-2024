@@ -43,8 +43,7 @@ async fn main() {
 
     let solution = Day1Solution::new("./src/inputs/1-input.txt");
 
-    println!("Part 1: {}", solution.get_part_1_solution());
-    println!("Part 2: {}", solution.get_part_2_solution());
+    solution.run_both_solutions();
 }
 
 pub fn sanitize_downloaded_input(input: String) -> String {
