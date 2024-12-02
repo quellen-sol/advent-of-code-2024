@@ -2,7 +2,7 @@ use std::process;
 
 use clap::Parser;
 use defs::Solution;
-use solutions::day_1::Day1Solution;
+use solutions::day_2::Day2Solution;
 
 mod defs;
 mod solutions;
@@ -41,7 +41,7 @@ async fn main() {
         process::exit(0);
     }
 
-    let solution = Day1Solution::new("./src/inputs/1-input.txt");
+    let solution = Day2Solution::new("./src/inputs/2-input.txt");
 
     solution.run_both_solutions();
 }
