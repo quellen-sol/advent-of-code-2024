@@ -51,6 +51,51 @@ impl<T> Grid<T> {
             current_position: (0, 0),
         }
     }
+
+    pub fn traverse_row(&self, y: isize) -> GridNodeDirectionIterator<T> {
+        let node = self.get_node(0, y).unwrap();
+        node.direction_iter(self, GridDirection::East)
+    }
+
+    pub fn traverse_column(&self, x: isize) -> GridNodeDirectionIterator<T> {
+        let node = self.get_node(x, 0).unwrap();
+        node.direction_iter(self, GridDirection::South)
+    }
+
+    pub fn iter_rows(&self) -> GridScanIterator<T> {
+        self.scan()
+    }
+
+    pub fn iter_columns(&self) -> GridColumnIterator<T> {
+        GridColumnIterator {
+            grid: self,
+            current_position: (0, 0),
+        }
+    }
+
+    pub fn num_rows(&self) -> usize {
+        self.inner_data.len()
+    }
+
+    pub fn num_columns(&self) -> usize {
+        self.inner_data.first().unwrap().len()
+    }
+}
+
+pub struct GridColumnIterator<'a, T> {
+    grid: &'a Grid<T>,
+    current_position: (isize, isize), // (x, y)
+}
+
+impl<'a, T> Iterator for GridColumnIterator<'a, T> {
+    type Item = &'a GridNode<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (ref mut x, ref mut y) = self.current_position;
+        let node = self.grid.get_node(*x, *y)?;
+        *y += 1;
+        Some(node)
+    }
 }
 
 pub struct GridScanIterator<'a, T> {
