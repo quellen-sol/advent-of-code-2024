@@ -2,12 +2,12 @@ use std::process;
 
 use clap::Parser;
 use defs::Solution;
-use solutions::day_3::Day3Solution;
+use solutions::day_4::Day4Solution;
 
 mod defs;
 mod solutions;
-
-pub const YEAR: &'static str = "2024";
+mod utils;
+pub const YEAR: &str = "2024";
 
 #[derive(Parser)]
 struct Args {
@@ -41,7 +41,7 @@ async fn main() {
         process::exit(0);
     }
 
-    let solution = Day3Solution::new("./src/inputs/3-input.txt");
+    let solution = Day4Solution::new("./src/inputs/4-input.txt");
 
     solution.run_both_solutions();
 }

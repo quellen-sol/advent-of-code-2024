@@ -35,9 +35,9 @@ impl Solution<i32, i32> for Day1Solution {
         left_list
             .iter()
             .map(|num| {
-                let amt = similarities.get(&num).unwrap_or(&0);
-                let increase = num * amt;
-                increase
+                let amt = similarities.get(num).unwrap_or(&0);
+
+                num * amt
             })
             .sum()
     }

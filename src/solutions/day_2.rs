@@ -63,7 +63,7 @@ impl<'a> Report<'a> {
         for level in levels {
             if let Some(last) = last_level {
                 let diff = (level - last).abs();
-                if diff < 1 || diff > 3 {
+                if !(1..=3).contains(&diff) {
                     return false;
                 }
                 let ord = level.cmp(&last);
@@ -91,7 +91,7 @@ impl<'a> Report<'a> {
             last_level = Some(level);
         }
 
-        return true;
+        true
     }
 
     pub fn report_safe_p2(&self, remove: Option<usize>) -> bool {
@@ -111,7 +111,7 @@ impl<'a> Report<'a> {
             }
             if let Some(last) = last_level {
                 let diff = (level - last).abs();
-                if diff < 1 || diff > 3 {
+                if !(1..=3).contains(&diff) {
                     // if we did remove, return hard false
                     // if so, return result of report + remove
                     will_remove = true;
@@ -151,6 +151,6 @@ impl<'a> Report<'a> {
             last_level = Some(level);
         }
 
-        return true;
+        true
     }
 }

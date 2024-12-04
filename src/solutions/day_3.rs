@@ -51,11 +51,12 @@ impl Solution<i32, i32> for Day3Solution {
                     }
                     let nums = nums.unwrap();
 
+                    // RUST BUG (TODO: Report if not already)
                     let result = nums
                         .trim()
                         .split(',')
-                        .map(|v| v.parse().unwrap())
-                        .fold(1, |acc, c: i32| acc * c);
+                        .map(|v| v.parse::<i32>().unwrap())
+                        .product::<i32>();
 
                     sum += result;
                 }
