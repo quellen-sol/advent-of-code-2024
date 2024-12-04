@@ -65,7 +65,7 @@ impl<'a, T> Iterator for GridScanIterator<'a, T> {
         let (ref mut x, ref mut y) = self.current_position;
         let node = self.grid.get_node(*x, *y)?;
         *x += 1;
-        if *x >= self.grid.inner_data[*y as usize].len() as isize {
+        if *x as usize >= self.grid.inner_data[*y as usize].len() {
             *x = 0;
             *y += 1;
         }
@@ -142,17 +142,7 @@ impl<T> GridNode<T> {
             return None;
         }
 
-        match (diff_x, diff_y) {
-            (0, -1) => Some(GridDirection::North),
-            (0, 1) => Some(GridDirection::South),
-            (1, 0) => Some(GridDirection::East),
-            (-1, 0) => Some(GridDirection::West),
-            (1, -1) => Some(GridDirection::NorthEast),
-            (-1, -1) => Some(GridDirection::NorthWest),
-            (1, 1) => Some(GridDirection::SouthEast),
-            (-1, 1) => Some(GridDirection::SouthWest),
-            _ => None,
-        }
+        GridDirection::from_offset((diff_x, diff_y))
     }
 }
 
@@ -168,8 +158,8 @@ impl<'a, T> Iterator for GridNodeNeighborsIterator<'a, T> {
     fn next(&mut self) -> Option<Self::Item> {
         while self.idx < 8 {
             let next_direction = self.direction_from_idx()?;
-            let (x, y) = self.node.add_direction(next_direction);
-            if let Some(node) = self.grid.get_node(x, y) {
+            let node = self.node.get_node_in_direction(self.grid, next_direction);
+            if let Some(node) = node {
                 self.idx += 1;
                 return Some(node);
             }
@@ -205,8 +195,9 @@ impl<'a, T> Iterator for GridNodeDirectionIterator<'a, T> {
     type Item = &'a GridNode<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let (next_x, next_y) = self.current_node.add_direction(self.direction.clone());
-        let node = self.grid.get_node(next_x, next_y)?;
+        let node = self
+            .current_node
+            .get_node_in_direction(self.grid, self.direction.clone())?;
         self.current_node = node;
         Some(node)
     }
@@ -235,6 +226,20 @@ impl GridDirection {
             GridDirection::NorthWest => (-1, -1),
             GridDirection::SouthEast => (1, 1),
             GridDirection::SouthWest => (-1, 1),
+        }
+    }
+
+    pub fn from_offset(offset: (isize, isize)) -> Option<GridDirection> {
+        match offset {
+            (0, -1) => Some(GridDirection::North),
+            (0, 1) => Some(GridDirection::South),
+            (1, 0) => Some(GridDirection::East),
+            (-1, 0) => Some(GridDirection::West),
+            (1, -1) => Some(GridDirection::NorthEast),
+            (-1, -1) => Some(GridDirection::NorthWest),
+            (1, 1) => Some(GridDirection::SouthEast),
+            (-1, 1) => Some(GridDirection::SouthWest),
+            _ => None,
         }
     }
 
