@@ -24,22 +24,15 @@ impl Solution<i32, i32> for Day4Solution {
         let mut num_xmases = 0;
 
         for node in scan {
-            let val = &node.value;
-            if *val != 'X' {
+            if node.value != 'X' {
                 continue;
             }
 
-            let neighbors = node.neighbors(&grid);
-
-            for neigh in neighbors {
-                let v = &neigh.value;
-                if *v == 'M' {
+            for (current_direction, neigh) in node.neighbors(&grid) {
+                if neigh.value == 'M' {
                     // Start of an "XMAS"?
-                    let Some(direction) = node.try_get_direction(neigh) else {
-                        continue;
-                    };
-
-                    let mut dir_iter = neigh.direction_iter(&grid, direction);
+                    // Start iterating in the current direction to find an A and S
+                    let mut dir_iter = neigh.direction_iter(&grid, current_direction);
 
                     if dir_iter.next().is_some_and(|v| v.value == 'A')
                         && dir_iter.next().is_some_and(|v| v.value == 'S')

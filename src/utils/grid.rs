@@ -153,15 +153,17 @@ pub struct GridNodeNeighborsIterator<'a, T> {
 }
 
 impl<'a, T> Iterator for GridNodeNeighborsIterator<'a, T> {
-    type Item = &'a GridNode<T>;
+    type Item = (GridDirection, &'a GridNode<T>);
 
     fn next(&mut self) -> Option<Self::Item> {
         while self.idx < 8 {
             let next_direction = self.direction_from_idx()?;
-            let node = self.node.get_node_in_direction(self.grid, next_direction);
+            let node = self
+                .node
+                .get_node_in_direction(self.grid, next_direction.clone());
             if let Some(node) = node {
                 self.idx += 1;
-                return Some(node);
+                return Some((next_direction, node));
             }
             self.idx += 1;
         }
@@ -305,13 +307,13 @@ MXMXAXMASX";
         let grid = make_grid();
         let mut neighbors = grid.get_node(0, 0).unwrap().neighbors(&grid);
         let next_neighbor = neighbors.next().unwrap();
-        assert_eq!(next_neighbor.value, 'M');
+        assert_eq!(next_neighbor.1.value, 'M');
 
         let next_neighbor = neighbors.next().unwrap();
-        assert_eq!(next_neighbor.value, 'S');
+        assert_eq!(next_neighbor.1.value, 'S');
 
         let next_neighbor = neighbors.next().unwrap();
-        assert_eq!(next_neighbor.value, 'M');
+        assert_eq!(next_neighbor.1.value, 'M');
 
         let next_neighbor = neighbors.next();
         assert!(next_neighbor.is_none());
