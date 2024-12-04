@@ -19,7 +19,7 @@ pub trait Solution<T1: Display, T2: Display> {
         let elapsed_1 = now.elapsed();
 
         println!(
-            "Solution 1: {} took {:.2}ms",
+            "Solution 1: {} took {:.3}ms",
             solution_1,
             elapsed_1.as_secs_f64() * 1000.0
         );
@@ -29,7 +29,7 @@ pub trait Solution<T1: Display, T2: Display> {
         let elapsed_2 = now.elapsed();
 
         println!(
-            "Solution 2: {} took {:.2}ms",
+            "Solution 2: {} took {:.3}ms",
             solution_2,
             elapsed_2.as_secs_f64() * 1000.0
         );
