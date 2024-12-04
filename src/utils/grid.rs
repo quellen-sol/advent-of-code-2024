@@ -45,6 +45,10 @@ impl<T> Grid<T> {
         self.inner_data.get(y as usize)?.get(x as usize)
     }
 
+    pub fn get_node_mut(&mut self, x: isize, y: isize) -> Option<&mut GridNode<T>> {
+        self.inner_data.get_mut(y as usize)?.get_mut(x as usize)
+    }
+
     pub fn scan(&self) -> GridScanIterator<T> {
         GridScanIterator {
             grid: self,
