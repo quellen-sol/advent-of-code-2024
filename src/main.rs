@@ -2,7 +2,7 @@ use std::process;
 
 use clap::Parser;
 use defs::Solution;
-use solutions::day_4::Day4Solution;
+use solutions::*;
 
 mod defs;
 mod solutions;
@@ -41,9 +41,7 @@ async fn main() {
         process::exit(0);
     }
 
-    let solution = Day4Solution::new("./src/inputs/4-input.txt");
-
-    solution.run_both_solutions();
+    make_and_run_solution!(4);
 }
 
 pub fn sanitize_downloaded_input(input: String) -> String {
