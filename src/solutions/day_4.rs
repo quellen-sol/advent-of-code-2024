@@ -5,12 +5,14 @@ use crate::{
 
 pub struct Day4Solution {
     input: String,
+    grid: Grid<char>,
 }
 
 impl Solution<i32, i32> for Day4Solution {
     fn new(input_path: &str) -> Self {
         let input = Self::load_input(input_path);
-        Self { input }
+        let grid = Self::build_grid(&input);
+        Self { input, grid }
     }
 
     fn get_input(&self) -> &str {
@@ -18,9 +20,7 @@ impl Solution<i32, i32> for Day4Solution {
     }
 
     fn get_part_1_solution(&self) -> i32 {
-        let grid = self.build_grid();
-
-        let scan = grid.scan();
+        let scan = self.grid.scan();
         let mut num_xmases = 0;
 
         for node in scan {
@@ -28,11 +28,11 @@ impl Solution<i32, i32> for Day4Solution {
                 continue;
             }
 
-            for (current_direction, neigh) in node.neighbors(&grid) {
+            for (current_direction, neigh) in node.neighbors(&self.grid) {
                 if neigh.value == 'M' {
                     // Start of an "XMAS"?
                     // Start iterating in the current direction to find an A and S
-                    let mut dir_iter = neigh.direction_iter(&grid, current_direction);
+                    let mut dir_iter = neigh.direction_iter(&self.grid, current_direction);
 
                     if dir_iter.next().is_some_and(|v| v.value == 'A')
                         && dir_iter.next().is_some_and(|v| v.value == 'S')
@@ -48,15 +48,14 @@ impl Solution<i32, i32> for Day4Solution {
 
     fn get_part_2_solution(&self) -> i32 {
         let mut valid_xs = 0;
-        let grid = self.build_grid();
-        let scan = grid.scan();
+        let scan = self.grid.scan();
 
         for node in scan {
             if node.value == 'A' {
-                let nw = node.get_node_in_direction(&grid, GridDirection::NorthWest);
-                let ne = node.get_node_in_direction(&grid, GridDirection::NorthEast);
-                let sw = node.get_node_in_direction(&grid, GridDirection::SouthWest);
-                let se = node.get_node_in_direction(&grid, GridDirection::SouthEast);
+                let nw = node.get_node_in_direction(&self.grid, GridDirection::NorthWest);
+                let ne = node.get_node_in_direction(&self.grid, GridDirection::NorthEast);
+                let sw = node.get_node_in_direction(&self.grid, GridDirection::SouthWest);
+                let se = node.get_node_in_direction(&self.grid, GridDirection::SouthEast);
 
                 if nw.is_none() || ne.is_none() || sw.is_none() || se.is_none() {
                     // an X is not possible
@@ -87,8 +86,8 @@ impl Solution<i32, i32> for Day4Solution {
 }
 
 impl Day4Solution {
-    fn build_grid(&self) -> Grid<char> {
-        let creation_iter = self.get_input().chars().map(|c| {
+    fn build_grid(input: &str) -> Grid<char> {
+        let creation_iter = input.chars().map(|c| {
             if c == '\n' {
                 GridCreationItem::Break
             } else {
