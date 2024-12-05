@@ -93,8 +93,11 @@ impl Solution<i32, i32> for Day5Solution {
             entry.insert(a);
         }
 
+        let mut mid_sum = 0;
+
         for report in reports.lines() {
-            let mut split_vec = report
+            let mut use_this = false;
+            let mut report_vec = report
                 .trim()
                 .split(',')
                 .map(|n| {
@@ -105,15 +108,38 @@ impl Solution<i32, i32> for Day5Solution {
                 })
                 .collect_vec();
 
-            let outer_iter = split_vec.iter().enumerate();
+            loop {
+                let mut to_swap = None;
+                for (o_idx, outer) in report_vec.iter().enumerate() {
+                    let Some(entry) = hm.get(outer) else {
+                        continue;
+                    };
+                    for (i_idx, inner) in report_vec.iter().enumerate().skip(o_idx + 1) {
+                        if entry.contains(inner) {
+                            use_this = true;
+                            to_swap = Some((o_idx, i_idx));
+                            break;
+                        }
+                    }
 
-            for (idx, outer_num) in outer_iter {
-                let rest = split_vec.iter().enumerate().skip(idx + 1);
-                for (inner_idx, inner_num) in rest {}
+                    if to_swap.is_some() {
+                        break;
+                    }
+                }
+
+                if let Some((a_idx, b_idx)) = to_swap {
+                    report_vec.swap(a_idx, b_idx);
+                } else {
+                    break;
+                }
+            }
+
+            if use_this {
+                mid_sum += (report_vec[report_vec.len() / 2] as i32);
             }
         }
 
-        todo!()
+        mid_sum
     }
 }
 
@@ -126,3 +152,5 @@ impl Day5Solution {
         (one, two)
     }
 }
+
+pub struct Report(Vec<u8>);
