@@ -3,7 +3,7 @@ pub enum GridCreationItem<T> {
     Break,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Grid<T> {
     pub inner_data: Vec<Vec<GridNode<T>>>,
 }
@@ -45,14 +45,14 @@ impl<T> Grid<T> {
         self.inner_data.get(y as usize)?.get(x as usize)
     }
 
-    pub fn get_node_mut(&mut self, x: isize, y: isize) -> Option<&mut GridNode<T>> {
-        self.inner_data.get_mut(y as usize)?.get_mut(x as usize)
-    }
-
-    pub fn scan(&self) -> GridScanIterator<T> {
-        GridScanIterator {
+    pub fn scan(&self) -> GridRowIterator<T> {
+        GridRowIterator {
             grid: self,
             current_position: (0, 0),
+            current_rev_position: (
+                self.num_columns() as isize - 1,
+                self.num_rows() as isize - 1,
+            ),
         }
     }
 
@@ -66,7 +66,7 @@ impl<T> Grid<T> {
         node.direction_iter(self, GridDirection::South)
     }
 
-    pub fn iter_rows(&self) -> GridScanIterator<T> {
+    pub fn iter_rows(&self) -> GridRowIterator<T> {
         self.scan()
     }
 
@@ -74,6 +74,10 @@ impl<T> Grid<T> {
         GridColumnIterator {
             grid: self,
             current_position: (0, 0),
+            current_rev_position: (
+                self.num_columns() as isize - 1,
+                self.num_rows() as isize - 1,
+            ),
         }
     }
 
@@ -88,26 +92,47 @@ impl<T> Grid<T> {
 
 pub struct GridColumnIterator<'a, T> {
     grid: &'a Grid<T>,
-    current_position: (isize, isize), // (x, y)
+    current_position: (isize, isize),     // (x, y)
+    current_rev_position: (isize, isize), // (x, y)
 }
 
 impl<'a, T> Iterator for GridColumnIterator<'a, T> {
     type Item = &'a GridNode<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
+        let num_rows = self.grid.num_rows();
         let (ref mut x, ref mut y) = self.current_position;
         let node = self.grid.get_node(*x, *y)?;
         *y += 1;
+        if *y as usize >= num_rows {
+            *x += 1;
+            *y = 0;
+        }
         Some(node)
     }
 }
 
-pub struct GridScanIterator<'a, T> {
-    grid: &'a Grid<T>,
-    current_position: (isize, isize), // (x, y)
+impl<'a, T> DoubleEndedIterator for GridColumnIterator<'a, T> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let num_rows = self.grid.num_rows();
+        let (ref mut x, ref mut y) = self.current_rev_position;
+        let node = self.grid.get_node(*x, *y)?;
+        *y -= 1;
+        if *y < 0 {
+            *y = num_rows as isize - 1;
+            *x -= 1;
+        }
+        Some(node)
+    }
 }
 
-impl<'a, T> Iterator for GridScanIterator<'a, T> {
+pub struct GridRowIterator<'a, T> {
+    grid: &'a Grid<T>,
+    current_position: (isize, isize),     // (x, y)
+    current_rev_position: (isize, isize), // (x, y)
+}
+
+impl<'a, T> Iterator for GridRowIterator<'a, T> {
     type Item = &'a GridNode<T>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -118,6 +143,21 @@ impl<'a, T> Iterator for GridScanIterator<'a, T> {
             *x = 0;
             *y += 1;
         }
+        Some(node)
+    }
+}
+
+impl<'a, T> DoubleEndedIterator for GridRowIterator<'a, T> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        let num_cols = self.grid.num_columns();
+        let (ref mut x, ref mut y) = self.current_rev_position;
+        let node = self.grid.get_node(*x, *y)?;
+        *x -= 1;
+        if *x < 0 {
+            *x = num_cols as isize - 1;
+            *y -= 1;
+        }
+
         Some(node)
     }
 }
@@ -146,7 +186,7 @@ impl<T: PartialEq> PartialEq for GridNode<T> {
 }
 
 impl<T> GridNode<T> {
-    pub fn add_direction(&self, direction: GridDirection) -> (isize, isize) {
+    pub fn add_direction(&self, direction: &GridDirection) -> (isize, isize) {
         let (dx, dy) = direction.get_offset();
         (self.x + dx, self.y + dy)
     }
@@ -154,7 +194,7 @@ impl<T> GridNode<T> {
     pub fn get_node_in_direction<'a>(
         &self,
         grid: &'a Grid<T>,
-        direction: GridDirection,
+        direction: &GridDirection,
     ) -> Option<&'a GridNode<T>> {
         let new_dir = self.add_direction(direction);
         grid.get_node(new_dir.0, new_dir.1)
@@ -207,9 +247,7 @@ impl<'a, T> Iterator for GridNodeNeighborsIterator<'a, T> {
     fn next(&mut self) -> Option<Self::Item> {
         while self.idx < 8 {
             let next_direction = self.direction_from_idx()?;
-            let node = self
-                .node
-                .get_node_in_direction(self.grid, next_direction.clone());
+            let node = self.node.get_node_in_direction(self.grid, &next_direction);
             if let Some(node) = node {
                 self.idx += 1;
                 return Some((next_direction, node));
@@ -236,6 +274,8 @@ impl<'a, T> GridNodeNeighborsIterator<'a, T> {
     }
 }
 
+/// First node of this iteration is NOT the originating node this iterator was created from,
+/// but the next one in the direction specified
 pub struct GridNodeDirectionIterator<'a, T> {
     grid: &'a Grid<T>,
     current_node: &'a GridNode<T>,
@@ -248,7 +288,7 @@ impl<'a, T> Iterator for GridNodeDirectionIterator<'a, T> {
     fn next(&mut self) -> Option<Self::Item> {
         let node = self
             .current_node
-            .get_node_in_direction(self.grid, self.direction.clone())?;
+            .get_node_in_direction(self.grid, &self.direction)?;
         self.current_node = node;
         Some(node)
     }
@@ -385,5 +425,58 @@ MXMXAXMASX";
 
         let next_node = iter.next().unwrap();
         assert_eq!(next_node.value, 'X');
+    }
+
+    #[test]
+    fn test_grid_iter_columns() {
+        let grid = make_grid();
+        let mut iter = grid.iter_columns();
+        let first_node = iter.next().unwrap();
+        assert_eq!(first_node.value, 'M');
+
+        let second_node = iter.next().unwrap();
+        assert_eq!(second_node.value, 'M');
+
+        let third_node = iter.next().unwrap();
+        assert_eq!(third_node.value, 'A');
+
+        let fourth_node = iter.next().unwrap();
+        assert_eq!(fourth_node.value, 'M');
+    }
+
+    #[test]
+    fn test_grid_iter_columns_rev() {
+        let grid = make_grid();
+        let mut iter = grid.iter_columns().rev();
+
+        let first_node = iter.next().unwrap();
+        assert_eq!(first_node.value, 'X');
+
+        let second_node = iter.next().unwrap();
+        assert_eq!(second_node.value, 'M');
+
+        let third_node = iter.next().unwrap();
+        assert_eq!(third_node.value, 'A');
+
+        let fourth_node = iter.next().unwrap();
+        assert_eq!(fourth_node.value, 'S');
+    }
+
+    #[test]
+    fn test_grid_iter_rows_rev() {
+        let grid = make_grid();
+        let mut iter = grid.iter_rows().rev();
+
+        let first_node = iter.next().unwrap();
+        assert_eq!(first_node.value, 'X');
+
+        let second_node = iter.next().unwrap();
+        assert_eq!(second_node.value, 'S');
+
+        let third_node = iter.next().unwrap();
+        assert_eq!(third_node.value, 'A');
+
+        let fourth_node = iter.next().unwrap();
+        assert_eq!(fourth_node.value, 'M');
     }
 }

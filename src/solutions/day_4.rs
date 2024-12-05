@@ -52,10 +52,10 @@ impl Solution<i32, i32> for Day4Solution {
 
         for node in scan {
             if node.value == 'A' {
-                let nw = node.get_node_in_direction(&self.grid, GridDirection::NorthWest);
-                let ne = node.get_node_in_direction(&self.grid, GridDirection::NorthEast);
-                let sw = node.get_node_in_direction(&self.grid, GridDirection::SouthWest);
-                let se = node.get_node_in_direction(&self.grid, GridDirection::SouthEast);
+                let nw = node.get_node_in_direction(&self.grid, &GridDirection::NorthWest);
+                let ne = node.get_node_in_direction(&self.grid, &GridDirection::NorthEast);
+                let sw = node.get_node_in_direction(&self.grid, &GridDirection::SouthWest);
+                let se = node.get_node_in_direction(&self.grid, &GridDirection::SouthEast);
 
                 if nw.is_none() || ne.is_none() || sw.is_none() || se.is_none() {
                     // an X is not possible
