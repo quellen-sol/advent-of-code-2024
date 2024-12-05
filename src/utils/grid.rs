@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub enum GridCreationItem<T> {
     Item(T),
     Break,
