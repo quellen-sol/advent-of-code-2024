@@ -296,7 +296,7 @@ impl<'a, T> Iterator for GridNodeDirectionIterator<'a, T> {
     }
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GridDirection {
     North,
     South,
@@ -347,6 +347,23 @@ impl GridDirection {
             GridDirection::SouthEast => GridDirection::NorthWest,
             GridDirection::SouthWest => GridDirection::NorthEast,
         }
+    }
+
+    pub fn rotate_right(&self) -> GridDirection {
+        match self {
+            GridDirection::North => GridDirection::East,
+            GridDirection::East => GridDirection::South,
+            GridDirection::South => GridDirection::West,
+            GridDirection::West => GridDirection::North,
+            GridDirection::NorthEast => GridDirection::SouthEast,
+            GridDirection::NorthWest => GridDirection::NorthEast,
+            GridDirection::SouthEast => GridDirection::SouthWest,
+            GridDirection::SouthWest => GridDirection::NorthWest,
+        }
+    }
+
+    pub fn rotate_left(&self) -> GridDirection {
+        self.rotate_right().rotate_right().rotate_right()
     }
 }
 

@@ -49,13 +49,13 @@ impl Solution<i32, i32> for Day5Solution {
             let outer_iter = split_vec.iter().enumerate();
 
             for (idx, num) in outer_iter {
-                let Some(hm_entry) = hm.get(&num) else {
+                let Some(hm_entry) = hm.get(num) else {
                     continue;
                 };
 
                 let inner_iter = split_vec.iter().skip(idx + 1);
                 for cmp_num in inner_iter {
-                    if hm_entry.contains(&cmp_num) {
+                    if hm_entry.contains(cmp_num) {
                         // num has broken a rule
                         valid_report = false;
                         break;
