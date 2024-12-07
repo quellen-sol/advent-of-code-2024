@@ -41,7 +41,7 @@ async fn main() {
         process::exit(0);
     }
 
-    make_and_run_solution!(6);
+    make_and_run_solution!(7);
 }
 
 pub fn sanitize_downloaded_input(input: String) -> String {
