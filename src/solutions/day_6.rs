@@ -54,7 +54,6 @@ impl Solution<i32, i32> for Day6Solution {
             break;
         }
 
-        println!("walks: {walks}");
         let unique_points = visited.values().fold(0, |acc, curr| acc + curr.len());
 
         unique_points as i32
@@ -73,8 +72,6 @@ impl Solution<i32, i32> for Day6Solution {
             if *replace_node.value.borrow() == '#' {
                 continue;
             }
-
-            // println!("replacing at x: {}, y: {}", replace_node.x, replace_node.y);
 
             let old_value = replace_node.value.replace('#');
 

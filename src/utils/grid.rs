@@ -235,6 +235,16 @@ impl<T> GridNode<T> {
 
         GridDirection::from_offset((diff_x, diff_y))
     }
+
+    /// Returns the Manhattan Distance
+    pub fn distance(&self, other: &Self) -> isize {
+        (other.y - self.y).abs() + (other.x - self.x).abs()
+    }
+
+    /// returns (rise, run)
+    pub fn slope(&self, other: &Self) -> (isize, isize) {
+        (other.y - self.y, other.x - self.x)
+    }
 }
 
 pub struct GridNodeNeighborsIterator<'a, T> {
