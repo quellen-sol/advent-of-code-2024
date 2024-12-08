@@ -80,7 +80,7 @@ impl Solution<i32, i32> for Day8Solution {
                 let p1 = perm[0];
                 let p2 = perm[1];
                 let (mut rise, mut run) = p1.slope(p2);
-                let s_gcd = gcd(rise.abs(), run.abs());
+                let s_gcd = gcd(rise as i64, run as i64) as isize;
                 rise /= s_gcd;
                 run /= s_gcd;
 
