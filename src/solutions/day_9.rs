@@ -110,7 +110,6 @@ impl Solution<i64, i64> for Day9Solution {
                 Block::Value((r_amt, r_id)) => {
                     'left_search: for (l_idx, l_block) in v.iter().enumerate() {
                         if l_idx > r_idx {
-                            // println!("{l_idx} >= {r_idx}. Ending left search");
                             break 'left_search;
                         }
                         match l_block {
@@ -163,9 +162,7 @@ impl Solution<i64, i64> for Day9Solution {
         for block in v {
             match block {
                 Block::Empty(amt) => {
-                    for i in 0..amt {
-                        idx += 1;
-                    }
+                    idx += amt;
                 }
                 Block::Value((amt, id)) => {
                     for i in 0..amt {

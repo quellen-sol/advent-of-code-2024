@@ -83,6 +83,19 @@ impl<T> Grid<T> {
         }
     }
 
+    // `slope = (rise, run)`
+    pub fn iter_by_slope(
+        &self,
+        start_position: (isize, isize),
+        slope: (isize, isize),
+    ) -> GridSlopeIterator<T> {
+        GridSlopeIterator {
+            current_pos: start_position,
+            grid: self,
+            slope,
+        }
+    }
+
     pub fn num_rows(&self) -> usize {
         self.inner_data.len()
     }
@@ -245,6 +258,19 @@ impl<T> GridNode<T> {
     pub fn slope(&self, other: &Self) -> (isize, isize) {
         (other.y - self.y, other.x - self.x)
     }
+
+    /// `slope = (rise, run)`
+    pub fn iter_node_by_slope<'a>(
+        &self,
+        grid: &'a Grid<T>,
+        slope: (isize, isize),
+    ) -> GridSlopeIterator<'a, T> {
+        GridSlopeIterator {
+            current_pos: (self.x, self.y),
+            slope,
+            grid,
+        }
+    }
 }
 
 pub struct GridNodeNeighborsIterator<'a, T> {
@@ -302,6 +328,26 @@ impl<'a, T> Iterator for GridNodeDirectionIterator<'a, T> {
             .current_node
             .get_node_in_direction(self.grid, &self.direction)?;
         self.current_node = node;
+        Some(node)
+    }
+}
+
+pub struct GridSlopeIterator<'a, T> {
+    grid: &'a Grid<T>,
+    slope: (isize, isize),
+    current_pos: (isize, isize),
+}
+
+impl<'a, T> Iterator for GridSlopeIterator<'a, T> {
+    type Item = &'a GridNode<T>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let (ref mut c_x, ref mut c_y) = self.current_pos;
+        let node = self.grid.get_node(*c_x, *c_y)?;
+        let (rise, run) = &self.slope;
+        *c_y += *rise;
+        *c_x += *run;
+
         Some(node)
     }
 }
