@@ -11,5 +11,5 @@ pub fn gcd(mut a: i64, mut b: i64) -> i64 {
 }
 
 pub fn lcm(a: i64, b: i64) -> i64 {
-    (a*b).abs() / gcd(a, b)
+    (a * b).abs() / gcd(a, b)
 }

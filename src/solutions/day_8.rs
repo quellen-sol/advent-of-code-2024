@@ -8,7 +8,7 @@ use itertools::Itertools;
 use crate::{
     defs::Solution,
     utils::{
-        grid::{Grid, GridCreationItem},
+        grid::{Grid, GridCreationItem, GridNode},
         math::gcd,
     },
 };
@@ -62,16 +62,17 @@ impl Solution<i32, i32> for Day8Solution {
     }
 
     fn get_part_2_solution(&self) -> i32 {
-        let freq_groups = self.grid.scan().fold(HashMap::new(), |mut acc, curr| {
-            let char_val = *curr.value.borrow();
-            if char_val == '.' {
-                return acc;
-            }
-            let entry = acc.entry(char_val).or_insert(vec![]);
-            entry.push(curr);
+        let freq_groups: HashMap<char, Vec<&GridNode<RefCell<char>>>> =
+            self.grid.scan().fold(HashMap::new(), |mut acc, curr| {
+                let char_val = *curr.value.borrow();
+                if char_val == '.' {
+                    return acc;
+                }
+                let entry = acc.entry(char_val).or_insert(vec![]);
+                entry.push(curr);
 
-            acc
-        });
+                acc
+            });
 
         let mut visited = HashSet::new();
 
