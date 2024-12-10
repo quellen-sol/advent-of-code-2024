@@ -223,6 +223,32 @@ impl<T> GridNode<T> {
         }
     }
 
+    pub fn plus_walk<'a>(
+        &'a self,
+        grid: &'a Grid<T>,
+    ) -> impl Iterator<Item = (GridDirection, &'a GridNode<T>)> {
+        GridPlusIterator {
+            grid,
+            node: self,
+            idx: 0,
+        }
+    }
+
+    pub fn diagonal_walk<'a>(
+        &'a self,
+        grid: &'a Grid<T>,
+    ) -> impl Iterator<Item = (GridDirection, &'a GridNode<T>)> {
+        self.neighbors(grid).enumerate().filter_map(
+            |(idx, n)| {
+                if idx % 2 == 1 {
+                    Some(n)
+                } else {
+                    None
+                }
+            },
+        )
+    }
+
     pub fn direction_iter<'a>(
         &'a self,
         grid: &'a Grid<T>,
@@ -309,6 +335,41 @@ impl<'a, T> GridNodeNeighborsIterator<'a, T> {
             7 => Some(GridDirection::NorthWest),
             _ => None,
         }
+    }
+}
+
+pub struct GridPlusIterator<'a, T> {
+    grid: &'a Grid<T>,
+    node: &'a GridNode<T>,
+    idx: usize,
+}
+
+impl<'a, T> GridPlusIterator<'a, T> {
+    pub fn direction_from_idx(&self) -> Option<GridDirection> {
+        match self.idx {
+            0 => Some(GridDirection::North),
+            1 => Some(GridDirection::East),
+            2 => Some(GridDirection::South),
+            3 => Some(GridDirection::West),
+            _ => None,
+        }
+    }
+}
+
+impl<'a, T> Iterator for GridPlusIterator<'a, T> {
+    type Item = (GridDirection, &'a GridNode<T>);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while self.idx < 4 {
+            let next_direction = self.direction_from_idx()?;
+            let node = self.node.get_node_in_direction(self.grid, &next_direction);
+            if let Some(node) = node {
+                self.idx += 1;
+                return Some((next_direction, node));
+            }
+            self.idx += 1;
+        }
+        None
     }
 }
 
@@ -553,5 +614,41 @@ MXMXAXMASX";
 
         let fourth_node = iter.next().unwrap();
         assert_eq!(fourth_node.value, 'M');
+    }
+
+    #[test]
+    fn test_grid_plus_walk() {
+        let grid = make_grid();
+        let node = grid.get_node(1, 1).unwrap();
+        let mut iter = node.plus_walk(&grid);
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'M');
+
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'A');
+
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'M');
+
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'M');
+
+        let next_node = iter.next();
+        assert!(next_node.is_none());
+    }
+
+    #[test]
+    fn test_grid_plus_walk_2() {
+        let grid = make_grid();
+        let node = grid.get_node(0, 0).unwrap();
+        let mut iter = node.plus_walk(&grid);
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'M');
+
+        let next_node = iter.next().unwrap();
+        assert_eq!(next_node.1.value, 'M');
+
+        let next_node = iter.next();
+        assert!(next_node.is_none());
     }
 }
