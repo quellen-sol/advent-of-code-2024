@@ -166,9 +166,9 @@ impl Cycle {
                 total_len += len_done;
             }
 
-            return total_len;
+            total_len
         } else {
-            return result.len() as i64;
+            result.len() as i64
         }
     }
 }
