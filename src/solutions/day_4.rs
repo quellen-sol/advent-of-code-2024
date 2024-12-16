@@ -69,11 +69,11 @@ impl Solution<i32, i32> for Day4Solution {
 
                 let first_part_of_x_valid = (nw.value == 'M' || nw.value == 'S')
                     && (se.value == 'M' || se.value == 'S')
-                    && (nw != se);
+                    && (nw.value != se.value);
 
                 let second_part_of_x_valid = (ne.value == 'M' || ne.value == 'S')
                     && (sw.value == 'M' || sw.value == 'S')
-                    && (ne != sw);
+                    && (ne.value != sw.value);
 
                 if first_part_of_x_valid && second_part_of_x_valid {
                     valid_xs += 1;

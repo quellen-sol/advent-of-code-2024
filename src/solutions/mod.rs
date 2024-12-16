@@ -11,10 +11,12 @@ mod day_6;
 mod day_7;
 mod day_8;
 mod day_9;
+mod day_12;
 
 pub use day_1::*;
 pub use day_10::*;
 pub use day_11::*;
+pub use day_12::*;
 pub use day_2::*;
 pub use day_3::*;
 pub use day_4::*;
