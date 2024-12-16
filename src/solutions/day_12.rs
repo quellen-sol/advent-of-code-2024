@@ -68,7 +68,7 @@ impl Solution<i64, i64> for Day12Solution {
             // If all of the sudden we can move in the direction below (i.e., Up -> Left), do it
             // Until we reach node_0 again
 
-            let take_while_predicate = |node: &&GridNode<char>| group.contains(&node);
+            let take_while_predicate = |node: &&GridNode<char>| group.contains(node);
 
             let first = group.first().unwrap();
             let mut dir_stack = vec![];
@@ -88,7 +88,7 @@ impl Solution<i64, i64> for Day12Solution {
 
                 // Before stepping again, can we move in the direction below in priority?
                 if let Some(d_dir) = dir_stack.last() {
-                    let n_n = curr_node.get_node_in_direction(&self.grid, &d_dir);
+                    let n_n = curr_node.get_node_in_direction(&self.grid, d_dir);
                     if let Some(n_n) = n_n {
                         if group.contains(&n_n) {
                             // Set the new iter and direction
@@ -169,7 +169,7 @@ impl Solution<i64, i64> for Day12Solution {
 
         // Apply all changes
         for (c_idx, change_sides) in changes {
-            let entry = group_sides.get_mut(c_idx as usize).unwrap();
+            let entry = group_sides.get_mut(c_idx).unwrap();
 
             entry.1 += change_sides;
         }
