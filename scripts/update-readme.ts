@@ -36,7 +36,7 @@ async function main() {
       Cookie: `session=${ADVENT_SESSION_KEY}`
     }
   });
-  
+
   const quellen = Object.values(data.members).find(member => member.name === "quellen-sol");
   if (!quellen) {
     throw new Error("Could not find quellen-sol in the leaderboard");

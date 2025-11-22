@@ -1,13 +1,13 @@
+//! GLOBALLY REPLACE THE YEAR
+
 use std::process;
 
 use clap::Parser;
 use defs::Solution;
-use solutions::*;
 
 mod defs;
-mod solutions;
 mod utils;
-pub const YEAR: &str = "2024";
+mod years;
 
 #[derive(Parser)]
 struct Args {
@@ -27,7 +27,7 @@ async fn main() {
         let session_key = args
             .advent_session_key
             .expect("ADVENT_SESSION_KEY not set for downloading input");
-        let url = format!("https://adventofcode.com/{}/day/{}/input", YEAR, day);
+        let url = format!("https://adventofcode.com/{}/day/{}/input", 2015, day);
         let client = reqwest::Client::new();
         let result = client
             .get(url)
@@ -36,12 +36,16 @@ async fn main() {
             .await
             .unwrap();
         let text = sanitize_downloaded_input(result.text().await.unwrap());
-        std::fs::write(format!("./src/inputs/{}-input.txt", day), text).unwrap();
+        std::fs::write(
+            format!("./src/years/y{}/inputs/{}-input.txt", 2015, day),
+            text,
+        )
+        .unwrap();
         println!("Downloaded input for day {}", day);
         process::exit(0);
     }
 
-    make_and_run_solution!(12);
+    make_and_run_solution!(3, 2015);
 }
 
 pub fn sanitize_downloaded_input(input: String) -> String {
