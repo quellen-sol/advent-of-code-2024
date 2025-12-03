@@ -27,7 +27,7 @@ async fn main() {
         let session_key = args
             .advent_session_key
             .expect("ADVENT_SESSION_KEY not set for downloading input");
-        let url = format!("https://adventofcode.com/{}/day/{}/input", 2015, day);
+        let url = format!("https://adventofcode.com/{}/day/{}/input", 2025, day);
         let client = reqwest::Client::new();
         let result = client
             .get(url)
@@ -37,7 +37,7 @@ async fn main() {
             .unwrap();
         let text = sanitize_downloaded_input(result.text().await.unwrap());
         std::fs::write(
-            format!("./src/years/y{}/inputs/{}-input.txt", 2015, day),
+            format!("./src/years/y{}/inputs/{}-input.txt", 2025, day),
             text,
         )
         .unwrap();
@@ -45,7 +45,7 @@ async fn main() {
         process::exit(0);
     }
 
-    make_and_run_solution!(3, 2015);
+    make_and_run_solution!(2, 2025);
 }
 
 pub fn sanitize_downloaded_input(input: String) -> String {
