@@ -1,6 +1,9 @@
 use std::collections::HashSet;
 
-use crate::{defs::Solution, utils::{constants::VOWELS, strings::StringWindowsIter}};
+use crate::{
+    defs::Solution,
+    utils::{constants::VOWELS, strings::StringChunksIter},
+};
 
 pub struct Day5Solution {
     input: String,
@@ -83,7 +86,7 @@ impl Day5Solution {
         // let mut last_char = None;
 
         // for window in StringWindowsIter::new(s, 3) {
-            
+
         // }
 
         // has_repeated_pair && has_divided_pair

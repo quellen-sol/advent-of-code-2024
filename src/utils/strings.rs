@@ -1,43 +1,69 @@
-use std::str::Bytes;
-
-pub struct StringWindowsIter<'a> {
-    s_len: usize,
+pub struct StringChunksIter<'a> {
+    s: &'a str,
     idx: usize,
-    window_size: usize,
-    current_window: Vec<char>,
-    bytes_iter: Bytes<'a>,
+    chunk_size: usize,
 }
 
-impl<'a> StringWindowsIter<'a> {
-    pub fn new(s: &'a str, window_size: usize) -> Self {
+impl<'a> StringChunksIter<'a> {
+    pub fn new(s: &'a str, chunk_size: usize) -> Self {
         Self {
-            s_len: s.len(),
+            s,
             idx: 0,
-            window_size,
-            current_window: Vec::new(),
-            bytes_iter: s.bytes(),
+            chunk_size,
         }
     }
 }
 
-impl<'a> Iterator for StringWindowsIter<'a> {
-    type Item = Vec<char>;
+impl<'a> Iterator for StringChunksIter<'a> {
+    type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let next_idx = self.idx + self.window_size;
-        if next_idx >= self.s_len {
+        let chunk = self
+            .s
+            .chars()
+            .skip(self.idx)
+            .take(self.chunk_size)
+            .collect::<String>();
+
+        if chunk.is_empty() {
             return None;
         }
 
-        let window = self
-            .bytes_iter
-            .by_ref()
-            .take(self.window_size)
-            .map(|b| b as char)
-            .collect::<Vec<_>>();
+        self.idx += self.chunk_size;
 
-        self.idx += 1;
+        Some(chunk)
+    }
+}
 
-        Some(window)
+#[cfg(test)]
+mod tests {
+    use crate::utils::strings::StringChunksIter;
+
+    #[test]
+    fn chunk_1() {
+        let s = "ABCDEFG";
+        let mut iter = StringChunksIter::new(s, 2);
+
+        let w = iter.next().unwrap();
+        assert_eq!(w, "AB");
+        let w = iter.next().unwrap();
+        assert_eq!(w, "CD");
+        let w = iter.next().unwrap();
+        assert_eq!(w, "EF");
+        let w = iter.next().unwrap();
+        assert_eq!(w, "G");
+    }
+
+    #[test]
+    fn chunk_2() {
+        let s = "ABCDEFG";
+        let mut iter = StringChunksIter::new(s, 3);
+
+        let w = iter.next().unwrap();
+        assert_eq!(w, "ABC");
+        let w = iter.next().unwrap();
+        assert_eq!(w, "DEF");
+        let w = iter.next().unwrap();
+        assert_eq!(w, "G");
     }
 }

@@ -6,7 +6,7 @@ on:
   workflow_dispatch: # Manually run workflow
 
 env:
-  ADVENT_URL: ${{ secrets.ADVENT_URL }}
+  ADVENT_URL: ${{ vars.ADVENT_URL }}
   ADVENT_SESSION_KEY: ${{ secrets.ADVENT_SESSION_KEY }}
 
 jobs:
@@ -15,14 +15,14 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
-        with: 
+        with:
           ssh-key: ${{ secrets.SSH_KEY }}
 
       - name: Setup Git Config
         run: |
           git config --global user.name quellen-sol
           git config --global user.email quellen@step.finance
-    
+
       - uses: pnpm/action-setup@v2
         with:
           version: 9
@@ -32,7 +32,7 @@ jobs:
           node-version: 20
           cache: "pnpm"
           cache-dependency-path: "./pnpm-lock.yaml"
-      
+
       - name: Run README Update Script
         run: |
           pnpm i

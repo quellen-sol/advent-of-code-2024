@@ -419,56 +419,6 @@ impl<'a, T> Iterator for GridSlopeIterator<'a, T> {
     }
 }
 
-// pub struct FillIterator<'a, T> {
-//     grid: &'a Grid<T>,
-//     visited: HashSet<(isize, isize)>,
-//     node_stack: Vec<&'a GridNode<T>>,
-//     predicate: Box<dyn Fn(&'a GridNode<T>) -> bool>,
-//     current_iter: GridNodeNeighborsIterator<'a, T>,
-//     current_node: Option<&'a GridNode<T>>,
-// }
-
-// impl<'a, T> Iterator for FillIterator<'a, T> {
-//     type Item = &'a GridNode<T>;
-
-//     fn next(&mut self) -> Option<Self::Item> {
-//         let c_node = self.current_node.take();
-//         loop {
-//             let next_node_tup = self.current_iter.next();
-//             if let Some((_, next_node_inner)) = next_node_tup {
-//                 // Was this already visited? Ignore
-//                 if !self.visited.insert((next_node_inner.x, next_node_inner.y)) {
-//                     continue;
-//                 }
-
-//                 // Does this meet the predicate? If not, ignore
-//                 let pred = &self.predicate;
-//                 if !pred(next_node_inner) {
-//                     continue;
-//                 }
-
-//                 // Otherwise, this is good to yield!
-//                 self.node_stack.push(next_node_inner);
-//                 self.current_node = Some(next_node_inner);
-
-//                 break;
-//             } else {
-//                 // Is there something left in node_queue?
-//                 let Some(next_to_iter) = self.node_stack.pop() else {
-//                     break;
-//                 };
-//                 // If so, make a new iter, then pull next of that
-
-//                 // Otherwise, we're completely done
-
-//                 break;
-//             }
-//         }
-
-//         c_node
-//     }
-// }
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum GridDirection {
     North,

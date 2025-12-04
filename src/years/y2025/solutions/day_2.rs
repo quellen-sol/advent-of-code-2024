@@ -2,13 +2,13 @@ use std::ops::RangeInclusive;
 
 use regex::Regex;
 
-use crate::defs::Solution;
+use crate::{defs::Solution, utils::strings::StringChunksIter};
 
 pub struct Day2Solution {
     input: String,
 }
 
-impl Solution<usize, i64> for Day2Solution {
+impl Solution<i64, i64> for Day2Solution {
     fn new(input_path: &str) -> Self {
         let input = Self::load_input(input_path);
         Self { input }
@@ -18,14 +18,18 @@ impl Solution<usize, i64> for Day2Solution {
         &self.input
     }
 
-    fn get_part_1_solution(&self) -> usize {
-        let ranges = self.get_ranges();
-        
-        ranges.iter().map(|r| r.find_invalids()).sum()
+    fn get_part_1_solution(&self) -> i64 {
+        self.get_ranges()
+            .into_iter()
+            .map(|r| r.find_invalids_p1())
+            .sum()
     }
 
     fn get_part_2_solution(&self) -> i64 {
-        todo!()
+        self.get_ranges()
+            .into_iter()
+            .map(|r| r.find_invalids_p2())
+            .sum()
     }
 }
 
@@ -63,7 +67,7 @@ pub struct QRange {
 }
 
 impl QRange {
-    pub fn find_invalids(&self) -> usize {
+    pub fn find_invalids_p1(&self) -> i64 {
         let mut invalids = 0;
         for i in self.lower..=self.upper {
             if i < 10 {
@@ -80,10 +84,60 @@ impl QRange {
             let first_slice = c_i.clone().take(mid).collect::<String>();
             let second_slice = c_i.skip(mid).take(mid).collect::<String>();
             if first_slice == second_slice {
-                invalids += i as usize;
+                invalids += i;
             }
         }
 
         invalids
+    }
+
+    pub fn find_invalids_p2(&self) -> i64 {
+        let mut invalids = 0;
+
+        for i in self.lower..=self.upper {
+            if i < 10 {
+                continue;
+            }
+
+            let i_s = i.to_string();
+            let i_l = i_s.len();
+
+            let mut is_invalid = false;
+            for j in 1..=(i_l / 2) {
+                let num_chunks = i_l / j;
+                if num_chunks <= 1 {
+                    continue;
+                }
+                let s = i_s.chars().take(j).collect::<String>();
+                is_invalid = StringChunksIter::new(&i_s, j).all(|c| c == s);
+
+                if is_invalid {
+                    break;
+                }
+            }
+
+            if is_invalid {
+                invalids += i;
+            }
+        }
+
+        invalids
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn p2() {
+        let range = QRange {
+            lower: 10,
+            upper: 12,
+            lower_s: "10".into(),
+            upper_s: "12".into(),
+        };
+
+        assert_eq!(range.find_invalids_p2(), 11);
     }
 }

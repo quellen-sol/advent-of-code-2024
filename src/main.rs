@@ -31,7 +31,7 @@ async fn main() {
         let client = reqwest::Client::new();
         let result = client
             .get(url)
-            .header("Cookie", format!("session={}", session_key))
+            .header("Cookie", format!("session={session_key}"))
             .send()
             .await
             .unwrap();
@@ -41,7 +41,7 @@ async fn main() {
             text,
         )
         .unwrap();
-        println!("Downloaded input for day {}", day);
+        println!("Downloaded input for day {day}");
         process::exit(0);
     }
 
